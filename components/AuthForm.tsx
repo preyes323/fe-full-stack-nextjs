@@ -9,7 +9,7 @@ import Button from "./Button";
 import Input from "./Input";
 
 const registerContent = {
-  linkUrl: "/register",
+  linkUrl: "/signin",
   linkText: "Already have an account?",
   header: "Create a new account",
   subheader: "Just a few things to get started",
@@ -17,7 +17,7 @@ const registerContent = {
 };
 
 const signinContent = {
-  linkUrl: "/signin",
+  linkUrl: "/register",
   linkText: "Dont' have an account?",
   header: "Welcome Back",
   subheader: "Enter your credentials to access your account",

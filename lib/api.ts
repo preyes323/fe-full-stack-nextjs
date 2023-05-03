@@ -1,4 +1,7 @@
-import { User } from "./types";
+import type { User } from "@prisma/client";
+
+type LoginInfo = Pick<User, "email" | "password">;
+type RegisterInfo = Pick<User, "email" | "password" | "firstName" | "lastName">;
 
 interface FetcherParams {
   url: string;
@@ -26,7 +29,7 @@ const fetcher = async ({ url, method, body, json = true }: FetcherParams) => {
   }
 };
 
-export const register = async (user: User) => {
+export const register = async (user: RegisterInfo) => {
   return fetcher({
     url: "/api/register",
     method: "POST",
@@ -35,7 +38,7 @@ export const register = async (user: User) => {
   });
 };
 
-export const signin = async (user: User) => {
+export const signin = async (user: LoginInfo) => {
   return fetcher({
     url: "/api/signin",
     method: "POST",
