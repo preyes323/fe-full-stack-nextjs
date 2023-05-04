@@ -35,7 +35,7 @@ export const register = async (user: RegisterInfo) => {
     url: "/api/register",
     method: "POST",
     body: user,
-    json: true,
+    json: false,
   });
 };
 

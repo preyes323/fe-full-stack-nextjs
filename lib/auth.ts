@@ -28,7 +28,7 @@ export const validateJWT = async (jwt: string) => {
     jwt,
     new TextEncoder().encode(process.env.JWT_SECRET)
   );
-
+``
   return payload.payload as User;
 };
 
