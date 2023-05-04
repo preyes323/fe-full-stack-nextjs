@@ -21,7 +21,8 @@ const fetcher = async ({ url, method, body, json = true }: FetcherParams) => {
   });
 
   if (!res.ok) {
-    throw new Error("API Error");
+    const { error } = await res.json();
+    throw new Error(`${error}`);
   }
 
   if (json) {
@@ -34,7 +35,7 @@ export const register = async (user: RegisterInfo) => {
     url: "/api/register",
     method: "POST",
     body: user,
-    json: false,
+    json: true,
   });
 };
 

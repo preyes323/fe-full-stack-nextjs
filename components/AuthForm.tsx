@@ -1,8 +1,9 @@
 "use client";
 
 import { register, signin } from "@/lib/api";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Spinner from "./Spinner";
 import Link from "next/link";
 import Card from "./Card";
 import Button from "./Button";
@@ -29,10 +30,12 @@ const initial = { email: "", password: "", firstName: "", lastName: "" };
 export default function AuthForm({ mode }: { mode: "register" | "signin" }) {
   const [formState, setFormState] = useState({ ...initial });
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       if (mode === "register") {
@@ -43,9 +46,20 @@ export default function AuthForm({ mode }: { mode: "register" | "signin" }) {
 
       router.replace("/home");
     } catch (e) {
-      setError(`Could not ${mode}`);
+      if (e instanceof Error) {
+        setError(`Could not ${mode} - ${e.message}`);
+      } else {
+        console.error("Unexpected error", e);
+        throw e;
+      }
     } finally {
-      setFormState({ ...initial });
+      setIsLoading(false);
+      setFormState((s) => ({
+        ...initial,
+        email: formState.email,
+        firstName: formState.firstName,
+        lastName: formState.lastName,
+      }));
     }
   };
 
@@ -56,7 +70,13 @@ export default function AuthForm({ mode }: { mode: "register" | "signin" }) {
       <div className="w-full">
         <div className="text-center">
           <h2 className="text-3xl mb-2">{content.header}</h2>
-          <p className="tex-lg text-black/25">{content.subheader}</p>
+          {isLoading ? (
+            <Spinner />
+          ) : error ? (
+            <p className="text-lg text-red-500/50">{error}</p>
+          ) : (
+            <p className="text-lg text-black/25">{content.subheader}</p>
+          )}
         </div>
         <form onSubmit={handleSubmit} className="py-10 w-full">
           {mode === "register" && (
@@ -67,6 +87,7 @@ export default function AuthForm({ mode }: { mode: "register" | "signin" }) {
                 </div>
                 <Input
                   required
+                  disabled={isLoading}
                   placeholder="First Name"
                   value={formState.firstName}
                   className="border-solid border-gray border-2 px-6 py-2 text-lg rounded-3xl w-full"
@@ -79,6 +100,7 @@ export default function AuthForm({ mode }: { mode: "register" | "signin" }) {
                 <div className="text-lg mb-4 ml-2 text-black/50">Last Name</div>
                 <Input
                   required
+                  disabled={isLoading}
                   placeholder="Last Name"
                   value={formState.lastName}
                   className="border-solid border-gray border-2 px-6 py-2 text-lg rounded-3xl w-full"
@@ -93,6 +115,7 @@ export default function AuthForm({ mode }: { mode: "register" | "signin" }) {
             <div className="text-lg mb-4 ml-2 text-black/50">Email</div>
             <Input
               required
+              disabled={isLoading}
               type="email"
               placeholder="Email"
               value={formState.email}
@@ -106,6 +129,7 @@ export default function AuthForm({ mode }: { mode: "register" | "signin" }) {
             <div className="text-lg mb-4 ml-2 text-black/50">Password</div>
             <Input
               required
+              disabled={isLoading}
               value={formState.password}
               type="password"
               placeholder="Password"
@@ -127,7 +151,7 @@ export default function AuthForm({ mode }: { mode: "register" | "signin" }) {
               </span>
             </div>
             <div>
-              <Button type="submit" intent="secondary">
+              <Button type="submit" disabled={isLoading} intent="secondary">
                 {content.buttonText}
               </Button>
             </div>

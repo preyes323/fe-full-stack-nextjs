@@ -51,6 +51,7 @@ interface Button
     VariantProps<typeof buttonClasses> {
   children: React.ReactNode;
   type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 }
 
 const Button: FC<Button> = ({

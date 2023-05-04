@@ -1,34 +1,73 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { db } from "@/lib/db";
 import { createJWT, hashPassword } from "@/lib/auth";
-import { serialize } from "cookie";
-import { use } from "react";
+import { Prisma } from "@prisma/client";
 
-export default async function POST(req: NextApiRequest, res: NextApiResponse) {
-  const user = await db.user.create({
-    data: {
-      email: req.body.email,
-      password: await hashPassword(req.body.password),
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-    },
-  });
+type RegisterInfo = {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+};
 
-  const jwt = await createJWT(user);
+export async function POST(req: NextRequest) {
+  let { email, password, firstName, lastName }: RegisterInfo = await req.json();
 
-  if (process.env.COOKIE_NAME) {
-    res.setHeader(
-      "Set-Cookie",
-      serialize(process.env.COOKIE_NAME, jwt, {
-        httpOnly: true,
+  try {
+    const user = await db.user.create({
+      data: {
+        email,
+        firstName,
+        lastName,
+        password: await hashPassword(password),
+      },
+    });
+
+    const jwt = await createJWT(user);
+    const isProduction = process.env.NODE_ENV === "production";
+
+    if (process.env.COOKIE_NAME) {
+      const response = new NextResponse(null, { status: 201 });
+
+      response.cookies.set({
+        name: process.env.COOKIE_NAME,
+        value: jwt,
         path: "/",
+        httpOnly: true,
+        secure: isProduction,
         maxAge: 60 * 60 * 24 * 7,
-      })
-    );
-  } else {
-    throw new Error("ENV variable COOKIE_NAME not set");
-  }
+      });
 
-  res.status(201);
-  res.end();
+      return response;
+    } else {
+      throw new Error("ENV variable COOKIE_NAME not set");
+    }
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return new NextResponse(
+          JSON.stringify({ error: "Email already exists" }),
+          {
+            status: 409,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+    }
+
+    return new NextResponse(
+      JSON.stringify({
+        error: "Unexpected error occurred when creating the user",
+      }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
 }
