@@ -1,6 +1,8 @@
 import Card from "./Card";
 import Image from "next/image";
 import logo from "../assets/images/logo.png";
+import SignOut from "./client/SignOut";
+
 import SidebarLink, { SidebarkLinkProps } from "./SidebarLink";
 
 const links: SidebarkLinkProps[] = [
@@ -19,6 +21,7 @@ const Sidebar = () => {
       {links.map((link) => (
         <SidebarLink link={link} key={link.link} />
       ))}
+      <SignOut />
     </Card>
   );
 };

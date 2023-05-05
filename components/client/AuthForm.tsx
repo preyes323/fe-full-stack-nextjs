@@ -3,11 +3,11 @@
 import { register, signin } from "@/lib/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Spinner from "./Spinner";
+import Spinner from "../Spinner";
 import Link from "next/link";
-import Card from "./Card";
-import Button from "./Button";
-import Input from "./Input";
+import Card from "../Card";
+import Button from "../Button";
+import Input from "../Input";
 
 const registerContent = {
   linkUrl: "/signin",
