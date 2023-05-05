@@ -49,7 +49,43 @@ async function main() {
     )
   );
 
-  console.log({ user, tasks });
+  const user2 = await db.user.upsert({
+    where: { email: "user2@email.com" },
+    update: {},
+    create: {
+      email: "user2@email.com",
+      firstName: "User2",
+      lastName: "Person",
+      password: await hashPassword("password"),
+      projects: {
+        create: new Array(5).fill(1).map((_, i) => ({
+          name: `Project ${i}`,
+          due: new Date(2022, 11, 25),
+        })),
+      },
+    },
+    include: {
+      projects: true,
+    },
+  });
+
+  const tasks2 = await Promise.all(
+    user.projects.map((project) =>
+      db.task.createMany({
+        data: new Array(10).fill(1).map((_, i) => {
+          return {
+            name: `Task ${i}`,
+            ownerId: user2.id,
+            projectId: project.id,
+            description: `Everything that describes Task ${i}`,
+            status: getRandomTaskStatus(),
+          };
+        }),
+      })
+    )
+  );
+
+  console.log({ user, tasks, user2, tasks2 });
 }
 main()
   .then(async () => {
