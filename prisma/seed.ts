@@ -70,7 +70,7 @@ async function main() {
   });
 
   const tasks2 = await Promise.all(
-    user.projects.map((project) =>
+    user2.projects.map((project) =>
       db.task.createMany({
         data: new Array(10).fill(1).map((_, i) => {
           return {

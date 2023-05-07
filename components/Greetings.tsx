@@ -2,21 +2,20 @@ import { getUserFromCookie } from "@/lib/auth";
 import Button from "./Button";
 import Card from "./Card";
 import { delay } from "@/lib/async";
-import { withAuthorizedUser } from "@/lib/dataAuth";
 import { redirect } from "next/navigation";
 
 const getData = async () => {
-  await delay(5000);
+  await delay(2000);
   const user = await getUserFromCookie();
+  if (!user) {
+    throw new Error("Invalid User. Redirecting to Sign-in Page.");
+  }
+
   return user;
 };
 
 const Greetings = async () => {
-  const user = await withAuthorizedUser();
-
-  if (!user) {
-    redirect("/signin");
-  }
+  const user = await getData();
 
   return (
     <Card className="w-full py-4 relative">

@@ -2,8 +2,8 @@
 const nextConfig = {
   experimental: {
     appDir: true,
-    typedRoutes: true,
     serverComponentsExternalPackages: ["bcrypt"],
+    serverActions: true,
   },
 };
 

@@ -1,6 +1,8 @@
 import GlassPane from "@/components/GlassPane";
 import Sidebar from "@/components/Sidebar";
 
+export const fetchCache = 'force-no-store'
+
 export default function DashboardLayout({
   children,
 }: {
