@@ -5,7 +5,7 @@ import { delay } from "@/lib/async";
 import { redirect } from "next/navigation";
 
 const getData = async () => {
-  await delay(2000);
+  // await delay(2000);
   const user = await getUserFromCookie();
   if (!user) {
     throw new Error("Invalid User. Redirecting to Sign-in Page.");

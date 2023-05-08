@@ -47,3 +47,19 @@ export const signin = async (user: LoginInfo) => {
     json: false,
   });
 };
+
+export const createNewProject = async (name: string) => {
+  return fetcher({
+    url: "/api/projects",
+    method: "POST",
+    body: { name },
+  });
+};
+
+export const getProjects = async () => {
+  return fetcher({
+    url: "/api/projects",
+    method: "GET",
+    body: {},
+  });
+};

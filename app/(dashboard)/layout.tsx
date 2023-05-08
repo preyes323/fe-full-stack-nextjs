@@ -1,7 +1,7 @@
 import GlassPane from "@/components/GlassPane";
 import Sidebar from "@/components/Sidebar";
 
-export const fetchCache = 'force-no-store'
+export const fetchCache = "force-no-store";
 
 export default function DashboardLayout({
   children,
@@ -14,6 +14,7 @@ export default function DashboardLayout({
         <Sidebar />
         <main className="w-full pl-6 h-full">{children}</main>
       </GlassPane>
+      <div id="modal"></div>
     </div>
   );
 }
